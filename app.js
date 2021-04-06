@@ -25,7 +25,7 @@ app.use(express.json());
 
 //! Sample Dummy Route
 app.route('/').get((req, res) => {
-  res.send('<h1>This server is working for EventHorz!</h1>');
+  res.send('<h1>This server is working for EventHorzx!</h1>');
 });
 
 //! Main Application Routes
