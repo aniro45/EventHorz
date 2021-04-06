@@ -1,61 +1,19 @@
 const request = require('../app');
 const Users = require('./../models/userModel');
+const APIFeatures = require('./../utils/apiFeatures');
 
 //! Get All Users from the Database
 exports.getAllUsers = async (req, res) => {
   //   console.log(req.body.user);
   try {
     console.log('getAllusers function has initiated!');
-
-    // Build Query
-    // 1) Filtering
-    const queryObj = { ...req.query };
-    const excludedFields = ['page', 'sort', 'limit', 'fields'];
-    excludedFields.forEach((el) => {
-      delete queryObj[el];
-    });
-
-    // 2) Advanced Filtering
-    console.log(req.query);
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    console.log(JSON.parse(queryStr));
-
-    //Different Block
-    let query = Users.find(JSON.parse(queryStr));
-
-    // 3) Sorting
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
-      console.log(sortBy);
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort('-createdAt');
-    }
-
-    //Field Limiting
-    if (req.query.fields) {
-      const fields = req.query.fields.split(',').join(' ');
-      query = query.select(fields);
-    } else {
-      query = query.select('-__v');
-    }
-
-    //Pagination
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 100;
-    const skip = (page - 1) * limit;
-
-    query = query.skip(skip).limit(10);
-
-    if (req.query.page) {
-      const numusers = await Users.countDocuments();
-      if (skip >= numTours) throw new Error('This Page does not exists!');
-    }
-
     // Execute Query
-    const data = await query;
-    //query.sort().select().skip().limit()       --Final 'query' After all the Filtering, how it would look
+    const features = new APIFeatures(Users.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+    const data = await features.query;
 
     //Send Response
     res.status(200).json({
