@@ -2,7 +2,7 @@ const request = require('../app');
 const Users = require('./../models/userModel');
 const APIFeatures = require('./../utils/apiFeatures');
 
-//! Get All Users from the Database from shubham
+//! Get All Users from the Database
 exports.getAllUsers = async (req, res) => {
   //   console.log(req.body.user);
   try {
